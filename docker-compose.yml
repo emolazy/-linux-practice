@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  # Наше приложение
+  my_app:
+    build: .  # Собирает Dockerfile из текущей папки
+    depends_on:
+      - db
+
+  # База данных
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Сохраняем данные, чтобы не терялись при перезапуске
+    ports:
+      - "5432:5432" # Пробрасываем порт (хост:контейнер)
+
+volumes:
+  pgdata:
