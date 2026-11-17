@@ -1,12 +1,16 @@
-name: Capstone API CI
+name: Capstone API CI/CD
 
 on: [push]
+
+# Даем права на запись пакетов (образов) в GHCR
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
     
-    # Указываем рабочую директорию
     defaults:
       run:
         working-directory: ./capstone-api
@@ -29,7 +33,20 @@ jobs:
     - name: Run tests
       run: |
         pytest app/tests/ -v --html=report.html --self-contained-html
-        
-    - name: Build Docker Image
-      run: |
-        docker build -t capstone-api:test .
+
+    # НОВЫЙ ШАГ: Логин в GitHub Container Registry
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # НОВЫЙ ШАГ: Сборка и отправка (push) образа
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./capstone-api
+        push: true
+        # Формируем тег (имя) образа: ghcr.io/ВАШ_НИК/capstone-api:latest
+        tags: ghcr.io/${{ github.repository_owner }}/capstone-api:latest
