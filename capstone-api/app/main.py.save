@@ -1,0 +1,18 @@
+from fastapi import FastAPI
+from .schemas import URLCheckRequest
+
+app = FastAPI(title="My Capstone API", version="1.0.0")
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello, DevOps! This is my first FastAPI app."}
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+# Новый эндпоинт для проверки валидации
+@app.post("/check")
+def create_check(check: URLCheckRequest):
+    # FastAPI автоматически проверит, что пришли поля url и status
+    return {"message": "Данные приняты!", "data": check
