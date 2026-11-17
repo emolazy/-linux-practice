@@ -1,0 +1,4 @@
+nginx/
+.env
+.venv/
+__pycache__/
