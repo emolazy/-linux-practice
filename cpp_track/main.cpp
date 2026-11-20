@@ -1,46 +1,47 @@
 #include <iostream>
-#include <vector>  // Для умного массива
-#include <map>     // Для словаря
+#include <fstream>   // Библиотека для работы с файлами
 #include <string>
+#include <stdexcept> // Библиотека для стандартных ошибок (исключений)
 
 int main() {
-    // === 1. VECTOR (Умный массив) ===
-    // Создаем список инвентаря. Тип данных в угловых скобках < >.
-    std::vector<std::string> inventory;
+    // --- БЛОК 1: ЗАПИСЬ В ФАЙЛ ---
+    std::cout << "--- Попытка записи в файл ---" << std::endl;
+    std::ofstream outFile("diary.txt"); // Создаем файл diary.txt
 
-    // Добавляем предметы (push_back - "втолкнуть в конец")
-    inventory.push_back("Меч");
-    inventory.push_back("Щит");
-    inventory.push_back("Зелье");
-
-    std::cout << "=== ИНВЕНТАРЬ (Vector) ===" << std::endl;
-    std::cout << "Размер рюкзака: " << inventory.size() << std::endl;
-    
-    // Перебираем все элементы с помощью цикла for
-    for (int i = 0; i < inventory.size(); i++) {
-        std::cout << i + 1 << ". " << inventory[i] << std::endl;
+    if (outFile.is_open()) { // Проверяем, что файл открылся
+        outFile << "Сегодня я выучил C++!" << std::endl;
+        outFile << "Это вторая строчка дневника." << std::endl;
+        outFile.close(); // Обязательно закрываем файл!
+        std::cout << "Файл diary.txt успешно создан и записан." << std::endl;
+    } else {
+        std::cout << "Не удалось создать файл." << std::endl;
     }
 
-    // === 2. MAP (Словарь) ===
-    // Создаем таблицу рекордов: имя (string) -> очки (int)
-    std::map<std::string, int> scores;
-
-    // Добавляем записи
-    scores["Vasya"] = 100;
-    scores["Petya"] = 250;
-    scores["Masha"] = 150;
-    scores["Pupa"] = 300;
-
-    std::cout << "\n=== ТАБЛИЦА РЕКОРДОВ (Map) ===" << std::endl;
+    // --- БЛОК 2: ЧТЕНИЕ И ОБРАБОТКА ОШИБОК ---
+    std::cout << "\n--- Попытка чтения секретного файла ---" << std::endl;
     
-    // Выводим конкретное значение по ключу
-    std::cout << "Очки Васи: " << scores["Vasya"] << std::endl;
+    try {
+        // Пытаемся открыть файл, которого не существует
+        std::ifstream inFile("secret.txt"); 
 
-    // Перебираем весь словарь
-    // (Тут мы используем современный цикл for, который сам перебирает пары)
-    for (const auto& pair : scores) {
-        std::cout << "Игрок: " << pair.first << " | Очки: " << pair.second << std::endl;
+        // Если файл не открылся, мы "выбрасываем" ошибку
+        if (!inFile.is_open()) {
+            throw std::runtime_error("Файл secret.txt не найден на диске!");
+        }
+
+        // Этот код выполнится только если файл существует
+        std::string line;
+        while (std::getline(inFile, line)) {
+            std::cout << "Прочитано: " << line << std::endl;
+        }
+        inFile.close();
+
+    } catch (const std::exception& e) {
+        // Сюда мы попадаем, если сработал throw
+        std::cout << "ПОЙМАНА ОШИБКА: " << e.what() << std::endl;
+        std::cout << "Программа не вылетела, она продолжает работу!" << std::endl;
     }
 
+    std::cout << "\n--- Программа успешно завершена ---" << std::endl;
     return 0;
 }
