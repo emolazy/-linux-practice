@@ -1,47 +1,71 @@
 #include <iostream>
-#include <fstream>   // Библиотека для работы с файлами
+#include <vector>
 #include <string>
-#include <stdexcept> // Библиотека для стандартных ошибок (исключений)
+
+// 1. Создаем структуру задачи (по сути, это класс для хранения данных)
+struct Task {
+    int id;
+    std::string description;
+    bool isDone;
+};
+
+// Функция для вывода меню
+void showMenu() {
+    std::cout << "\n=== МЕНЕДЖЕР ЗАДАЧ ===" << std::endl;
+    std::cout << "1. Добавить задачу" << std::endl;
+    std::cout << "2. Показать все задачи" << std::endl;
+    std::cout << "3. Выход" << std::endl;
+    std::cout << "Выберите действие: ";
+}
 
 int main() {
-    // --- БЛОК 1: ЗАПИСЬ В ФАЙЛ ---
-    std::cout << "--- Попытка записи в файл ---" << std::endl;
-    std::ofstream outFile("diary.txt"); // Создаем файл diary.txt
+    std::vector<Task> tasks; // Наш "умный массив" для хранения всех задач
+    int nextId = 1;          // Счетчик для ID новых задач
+    int choice = 0;          // Переменная для выбора пункта меню
 
-    if (outFile.is_open()) { // Проверяем, что файл открылся
-        outFile << "Сегодня я выучил C++!" << std::endl;
-        outFile << "Это вторая строчка дневника." << std::endl;
-        outFile.close(); // Обязательно закрываем файл!
-        std::cout << "Файл diary.txt успешно создан и записан." << std::endl;
-    } else {
-        std::cout << "Не удалось создать файл." << std::endl;
+    // Главный цикл программы. Работает, пока пользователь не выберет 3
+    while (choice != 3) {
+        showMenu();
+        std::cin >> choice;
+
+        if (choice == 1) {
+            // ДОБАВЛЕНИЕ ЗАДАЧИ
+            std::cin.ignore(); // Очищаем буфер, чтобы getline работал нормально
+            std::string desc;
+            std::cout << "Введите описание задачи: ";
+            std::getline(std::cin, desc); // Читаем целую строку (с пробелами)
+
+            Task newTask;
+            newTask.id = nextId;
+            newTask.description = desc;
+            newTask.isDone = false;
+
+            tasks.push_back(newTask); // Добавляем задачу в конец вектора
+            nextId++;
+            std::cout << "Задача успешно добавлена!" << std::endl;
+
+        } else if (choice == 2) {
+            // ПРОСМОТР ЗАДАЧ
+            std::cout << "\n--- СПИСОК ЗАДАЧ ---" << std::endl;
+            if (tasks.empty()) {
+                std::cout << "Список пуст. Добавьте первую задачу!" << std::endl;
+            } else {
+                for (int i = 0; i < tasks.size(); i++) {
+                    std::cout << "[" << tasks[i].id << "] " << tasks[i].description;
+                    if (tasks[i].isDone) {
+                        std::cout << " (ВЫПОЛНЕНО)";
+                    } else {
+                        std::cout << " (В процессе)";
+                    }
+                    std::cout << std::endl;
+                }
+            }
+        } else if (choice == 3) {
+            std::cout << "Выход из программы. До встречи!" << std::endl;
+        } else {
+            std::cout << "Неверный выбор! Попробуйте снова." << std::endl;
+        }
     }
 
-    // --- БЛОК 2: ЧТЕНИЕ И ОБРАБОТКА ОШИБОК ---
-    std::cout << "\n--- Попытка чтения секретного файла ---" << std::endl;
-    
-    try {
-        // Пытаемся открыть файл, которого не существует
-        std::ifstream inFile("secret.txt"); 
-
-        // Если файл не открылся, мы "выбрасываем" ошибку
-        if (!inFile.is_open()) {
-            throw std::runtime_error("Файл secret.txt не найден на диске!");
-        }
-
-        // Этот код выполнится только если файл существует
-        std::string line;
-        while (std::getline(inFile, line)) {
-            std::cout << "Прочитано: " << line << std::endl;
-        }
-        inFile.close();
-
-    } catch (const std::exception& e) {
-        // Сюда мы попадаем, если сработал throw
-        std::cout << "ПОЙМАНА ОШИБКА: " << e.what() << std::endl;
-        std::cout << "Программа не вылетела, она продолжает работу!" << std::endl;
-    }
-
-    std::cout << "\n--- Программа успешно завершена ---" << std::endl;
     return 0;
 }
