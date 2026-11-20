@@ -1,41 +1,46 @@
 #include <iostream>
+#include <vector>  // Для умного массива
+#include <map>     // Для словаря
 #include <string>
 
-// 1. СОЗДАЕМ ЧЕРТЕЖ (Класс)
-class Hero {
-public:
-    // Свойства (характеристики) героя
-    std::string name;
-    int hp;
-
-    // Метод (действие): получить урон
-    void takeDamage(int damage) {
-        hp = hp - damage; // Вычитаем урон из текущего здоровья
-        std::cout << name << " получил " << damage << " урона!" << std::endl;
-    }
-
-    // Метод (действие): показать статус
-    void showStatus() {
-        std::cout << "Герой: " << name << ", HP: " << hp << std::endl;
-    }
-};
-
 int main() {
-    // 2. СОЗДАЕМ ОБЪЕКТ (строим дом по чертежу)
-    Hero hero1;
+    // === 1. VECTOR (Умный массив) ===
+    // Создаем список инвентаря. Тип данных в угловых скобках < >.
+    std::vector<std::string> inventory;
 
-    // Задаем характеристики
-    hero1.name = "Воин";
-    hero1.hp = 100;
+    // Добавляем предметы (push_back - "втолкнуть в конец")
+    inventory.push_back("Меч");
+    inventory.push_back("Щит");
+    inventory.push_back("Зелье");
 
-    // Показываем, что все ок
-    hero1.showStatus(); // Выведет: Герой: Воин, HP: 100
+    std::cout << "=== ИНВЕНТАРЬ (Vector) ===" << std::endl;
+    std::cout << "Размер рюкзака: " << inventory.size() << std::endl;
+    
+    // Перебираем все элементы с помощью цикла for
+    for (int i = 0; i < inventory.size(); i++) {
+        std::cout << i + 1 << ". " << inventory[i] << std::endl;
+    }
 
-    // Наносим урон
-    hero1.takeDamage(30);
+    // === 2. MAP (Словарь) ===
+    // Создаем таблицу рекордов: имя (string) -> очки (int)
+    std::map<std::string, int> scores;
 
-    // Показываем результат
-    hero1.showStatus(); // Выведет: Герой: Воин, HP: 70
+    // Добавляем записи
+    scores["Vasya"] = 100;
+    scores["Petya"] = 250;
+    scores["Masha"] = 150;
+    scores["Pupa"] = 300;
+
+    std::cout << "\n=== ТАБЛИЦА РЕКОРДОВ (Map) ===" << std::endl;
+    
+    // Выводим конкретное значение по ключу
+    std::cout << "Очки Васи: " << scores["Vasya"] << std::endl;
+
+    // Перебираем весь словарь
+    // (Тут мы используем современный цикл for, который сам перебирает пары)
+    for (const auto& pair : scores) {
+        std::cout << "Игрок: " << pair.first << " | Очки: " << pair.second << std::endl;
+    }
 
     return 0;
 }
