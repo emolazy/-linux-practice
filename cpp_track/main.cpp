@@ -1,16 +1,41 @@
 #include <iostream>
-void addTen(int& num) {
-    num = num + 10; // Берем текущее значение, прибавляем 10 и записываем обратно
-}
+#include <string>
+
+// 1. СОЗДАЕМ ЧЕРТЕЖ (Класс)
+class Hero {
+public:
+    // Свойства (характеристики) героя
+    std::string name;
+    int hp;
+
+    // Метод (действие): получить урон
+    void takeDamage(int damage) {
+        hp = hp - damage; // Вычитаем урон из текущего здоровья
+        std::cout << name << " получил " << damage << " урона!" << std::endl;
+    }
+
+    // Метод (действие): показать статус
+    void showStatus() {
+        std::cout << "Герой: " << name << ", HP: " << hp << std::endl;
+    }
+};
 
 int main() {
-    int myVar = 5;
-    
-    std::cout << "До функции: " << myVar << std::endl; // Выведет 5
-    
-    addTen(myVar); // Вызываем функцию. Копия не создается, функция работает с myVar напрямую
-    
-    std::cout << "После функции: " << myVar << std::endl; // Выведет 15!
-    
+    // 2. СОЗДАЕМ ОБЪЕКТ (строим дом по чертежу)
+    Hero hero1;
+
+    // Задаем характеристики
+    hero1.name = "Воин";
+    hero1.hp = 100;
+
+    // Показываем, что все ок
+    hero1.showStatus(); // Выведет: Герой: Воин, HP: 100
+
+    // Наносим урон
+    hero1.takeDamage(30);
+
+    // Показываем результат
+    hero1.showStatus(); // Выведет: Герой: Воин, HP: 70
+
     return 0;
 }
